@@ -80,7 +80,7 @@ graph TD
 2. **Profile-based recommendation** ("Gợi ý đọc gì tiếp?"): Cần `topic_affinity` — batch daily là đủ vì sở thích không đổi theo phút.
 3. **Activity-aware response** ("Tôi hỏi quá nhiều rồi, có nên nghỉ?"): Cần `queries_last_hour` — batch hourly đủ để phát hiện pattern mệt mỏi.
 
-## 4. Vietnamese-context Considerations
+## 4. Các cân nhắc về ngữ cảnh tiếng Việt
 
 Khi xây dựng trợ lý AI cho người dùng Việt Nam, có một số đặc thù cần lưu ý:
 
@@ -88,7 +88,7 @@ Khi xây dựng trợ lý AI cho người dùng Việt Nam, có một số đặ
 - **Tokenizer choice tradeoff**: `pyvi` nhẹ hơn nhưng accuracy thấp hơn underthesea trên text informal. Whitespace split là baseline "đủ tốt" cho lab nhưng sẽ thất bại trên compound nouns tiếng Việt. Trong POC này, chúng tôi chọn whitespace split vì đơn giản và embedding model (`bge-small-en`) đã xử lý multilingual tokenization ở tầng subword.
 - **Embedding model cho tiếng Việt**: `bge-small-en-v1.5` không tối ưu cho tiếng Việt (MTEB-vi score thấp hơn `bge-m3` đáng kể). Production nên dùng `bge-m3` (multilingual, 1024-dim) nhưng cần RAM gấp 4× và latency cao hơn. Đây là tradeoff quality vs cost cần cân nhắc theo budget.
 
-## 5. Honest Limitations — What this POC doesn't handle yet
+## 5. Hạn chế thực tế — Những điều POC này chưa giải quyết
 
 - **Privacy isolation per user**: Hiện tại chỉ dùng payload filter `user_id` trên Qdrant — user A có thể bypass filter nếu gọi API trực tiếp. Production cần per-user collection hoặc Row-Level Security.
 - **Encryption at rest**: Qdrant in-memory và SQLite đều lưu plaintext. Dữ liệu cá nhân user cần encryption (AES-256) theo Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân.
